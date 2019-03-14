@@ -2,8 +2,8 @@ import React, { Component, Fragment } from 'react';
 
 import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildControls';
-import Modal from '../../components/UI/Modal/Modal';
-import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
+import Modal from '../../components/UI/Modal';
+import OrderSummary from '../../components/Burger/OrderSummary';
 
 const INGREDIENT_PRICES = {
   salad: 0.5,
@@ -76,6 +76,10 @@ class BurgerBuilder extends Component {
     this.setState( {purchasing: false});
   }
 
+  purchaseContinueHandler = () => {
+    alert('You continue!');
+  }
+
   render () {
     const disabledInfo = {
       ...this.state.ingredients
@@ -88,7 +92,11 @@ class BurgerBuilder extends Component {
         <Modal 
           show={this.state.purchasing}
           modalClosed={this.purchaseCancelledHandler}>
-          <OrderSummary ingredients={this.state.ingredients} />
+          <OrderSummary 
+            ingredients={this.state.ingredients}
+            price={this.state.totalPrice}
+            purchaseCancelled={this.purchaseCancelledHandler}
+            purchaseContinued={this.purchaseContinueHandler} />
         </Modal>
         <Burger ingredients={this.state.ingredients} />
         <BuildControls 

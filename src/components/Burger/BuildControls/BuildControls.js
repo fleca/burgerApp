@@ -1,6 +1,6 @@
 import React from 'react';
 
-import BuildControl from './BuildControl/BuildControl';
+import BuildControl from './BuildControl';
 import classes from './BuildControls.module.css';
 
 const controls = [
