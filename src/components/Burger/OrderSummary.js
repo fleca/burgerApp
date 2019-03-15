@@ -3,13 +3,14 @@ import React, { Fragment } from 'react';
 import Button from '../UI/Button';
 
 const orderSummary = (props) => {
+
   const ingredientSummary = Object.keys(props.ingredients)
     .map(igKey => {
       return (
       <li key={igKey}>
         <span style={{textTransform: 'capitalize'}}>{igKey}: {props.ingredients[igKey]}</span>
       </li>);
-    });
+    }); 
 
   return (
     <Fragment>
@@ -23,7 +24,7 @@ const orderSummary = (props) => {
       <Button btnType="Danger" clicked={props.purchaseCancelled}>CANCEL</Button>
       <Button btnType="Success" clicked={props.purchaseContinued}>CONTINUE</Button>
     </Fragment>
-  )
-};
+  );
+}
 
 export default orderSummary;
