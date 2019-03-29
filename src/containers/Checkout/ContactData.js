@@ -15,7 +15,12 @@ class ContactData extends Component {
           type: 'text',
           placeholder: 'Your Name'
         },
-        value: ''
+        value: '',
+        validation: {
+          required: true
+        },
+        valid: false,
+        touched: false
       },
       street: {
         elementType: 'input',
@@ -23,7 +28,12 @@ class ContactData extends Component {
           type: 'text',
           placeholder: 'Street'
         },
-        value: ''
+        value: '',
+        validation: {
+          required: true
+        },
+        valid: false,
+        touched: false
       },
       zipCode: {
         elementType: 'input',
@@ -31,7 +41,14 @@ class ContactData extends Component {
           type: 'text',
           placeholder: 'ZIP Code'
         },
-        value: ''
+        value: '',
+        validation: {
+          required: true,
+          minLength: 7,
+          maxLength: 7
+        },
+        valid: false,
+        touched: false
       },
       country: {
         elementType: 'input',
@@ -39,7 +56,12 @@ class ContactData extends Component {
           type: 'text',
           placeholder: 'Country'
         },
-        value: ''
+        value: '',
+        validation: {
+          required: true
+        },
+        valid: false,
+        touched: false
       },
       email: {
         elementType: 'input',
@@ -47,7 +69,12 @@ class ContactData extends Component {
           type: 'email',
           placeholder: 'Your E-Mail'
         },
-        value: ''
+        value: '',
+        validation: {
+          required: true
+        },
+        valid: false,
+        touched: false
       },
       deliveryMethod: {
         elementType: 'select',
@@ -57,20 +84,35 @@ class ContactData extends Component {
             {value: 'cheapest', displayValue: 'Cheapest'}
           ]
         },
-        value: ''
+        value: 'fastest'
       }
     },
+    formIsValid: true,
     loading: false
   }
 
-  orderHandler = (event) => {
+  orderHandler = ( event ) => {
+    //Prevents to reload the page
     event.preventDefault();
+
+    for (let formElement in this.state.orderForm) {
+      if (!this.state.orderForm[formElement].valid) {
+        this.setState({formIsValid: false});
+        return;
+      }
+    }
+
     //Firebase approach
     this.setState({loading: true});
-    
+    const formData = {};
+    for (let formElement in this.state.orderForm) {
+      formData[formElement] = this.state.orderForm[formElement].value;
+    }
+
     const order = {
       ingredients: this.props.ingredients,
-      price: this.props.totalPrice,      
+      price: this.props.totalPrice,
+      clientData: formData,
       time: new Date().toLocaleString("pt-BR", {timeZone: "America/Sao_Paulo"})
     };
     
@@ -84,6 +126,38 @@ class ContactData extends Component {
       });
   }
 
+  checkValidity(value, rules) {
+    let isValid = false;
+
+    if (rules.required) {
+      isValid = value.trim() !== '';
+    }
+
+    if (rules.minLength && isValid) {
+      isValid = value.length >= rules.minLength;
+    }
+
+    if (rules.maxLength && isValid) {
+      isValid = value.length <= rules.maxLength;
+    }
+
+    return isValid;
+  }
+
+  inputChangedHandler = (event, inputIdentifier) => {
+    const updatedOrderForm = {
+      ...this.state.orderForm
+    };
+    const updatedFormElement = {
+      ...updatedOrderForm[inputIdentifier] 
+    };
+    updatedFormElement.value = event.target.value;
+    updatedFormElement.valid = updatedFormElement.validation ? this.checkValidity(updatedFormElement.value, updatedFormElement.validation) : true;
+    updatedFormElement.touched = true;
+    updatedOrderForm[inputIdentifier] = updatedFormElement;
+    this.setState({orderForm: updatedOrderForm, formValid: true});
+  }
+
   render () {
     const formElementsArray = [];
     for (let key in this.state.orderForm) {
@@ -93,15 +167,19 @@ class ContactData extends Component {
       });
     }
     let form = (
-      <form>
+      <form onSubmit={this.orderHandler}>
         {formElementsArray.map(formElement => (
           <Input
             key={formElement.id}
             elementType={formElement.config.elementType}
             elementConfig={formElement.config.elementConfig}
-            value={formElement.config.value} />
+            value={formElement.config.value}
+            valid={formElement.config.valid || !formElement.config.validation}
+            touched={formElement.config.touched}
+            changed={(event) => this.inputChangedHandler(event, formElement.id)} />
         ))}
-        <Button btnType="Success" clicked={this.orderHandler}>ORDER</Button>
+        {this.state.formIsValid ? '' : <p className={classes.IncorrectSubmission}>Please enter all fields correctly!</p>}
+        <Button btnType="Success" clicked={this.orderHandler} >ORDER</Button>
       </form>
     );
     if (this.state.loading) {
