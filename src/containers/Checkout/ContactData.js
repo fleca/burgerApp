@@ -156,7 +156,7 @@ class ContactData extends Component {
     updatedFormElement.valid = updatedFormElement.validation ? this.checkValidity(updatedFormElement.value, updatedFormElement.validation) : true;
     updatedFormElement.touched = true;
     updatedOrderForm[inputIdentifier] = updatedFormElement;
-    this.setState({orderForm: updatedOrderForm, formValid: true});
+    this.setState({orderForm: updatedOrderForm, formIsValid: true});
   }
 
   render () {
