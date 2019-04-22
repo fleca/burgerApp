@@ -19,7 +19,8 @@ const addIngredient = (state, action) => {
   const updatedIngredients = updateObject(state.ingredients, updatedIngredient)
   const updatedState = {
     ingredients: updatedIngredients,
-    totalPrice: (+state.totalPrice + INGREDIENT_PRICES[action.ingredientName]).toFixed(2)
+    totalPrice: (+state.totalPrice + INGREDIENT_PRICES[action.ingredientName]).toFixed(2),
+    building: true
   }
   return updateObject(state, updatedState);
 }
@@ -29,16 +30,22 @@ const removeIngredient = (state, action) => {
   const updatedIngs = updateObject(state.ingredients, updatedIng)
   const updatedSt = {
     ingredients: updatedIngs,
-    totalPrice: (+state.totalPrice + INGREDIENT_PRICES[action.ingredientName]).toFixed(2)
+    totalPrice: (+state.totalPrice - INGREDIENT_PRICES[action.ingredientName]).toFixed(2),
+    building: true
   }
   return updateObject(state, updatedSt);
 }
 
 const setIngredients = (state, action) => {
+  let initialPrice = Object.keys(action.ingredients).reduce((sum, element) => { 
+    return sum += INGREDIENT_PRICES[element] * action.ingredients[element];
+  }, 0);
+
   return updateObject( state, {
     ingredients: action.ingredients,
     error: false,
-    totalPrice: action.totalPrice
+    totalPrice: action.basePrice + initialPrice,
+    building: false
   });
 }
 

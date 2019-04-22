@@ -19,7 +19,8 @@ export const setIngredients = (ingredients) => {
   return {
     type: actionTypes.SET_INGREDIENTS,
     ingredients: ingredients,
-    totalPrice: 4
+    basePrice: 4,
+    building: false
   };
 };
 
