@@ -6,11 +6,11 @@ import BuildControls from '../../components/Burger/BuildControls/BuildControls';
 import Modal from '../../components/UI/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary';
 import Spinner from '../../components/UI/Spinner';
-import withErrorHandler from '../hoc/withErrorHandler/withErrorHandler';
+import withErrorHandler from '../hoc/withErrorHandler';
 import * as actionTypes from '../../store/actions/index';
 import axios from '../../axios-orders';
 
-class BurgerBuilder extends Component {
+export class BurgerBuilder extends Component {
   state = {
     purchasing: false
   }

@@ -7,6 +7,7 @@ import Input from '../../components/UI/Input';
 import Button from '../../components/UI/Button';
 import Spinner from '../../components/UI/Spinner';
 import * as actionTypes from '../../store/actions/index';
+import { updateObject, checkValidity } from '../../shared/utility';
 
 class Auth extends Component {
   state = {
@@ -50,46 +51,16 @@ class Auth extends Component {
     }
   }
 
-  checkValidity(value, rules) {
-    let isValid = false;
-
-    if (rules.required) {
-      isValid = value.trim() !== '';
-    }
-
-    if (rules.minLength && isValid) {
-      isValid = value.length >= rules.minLength;
-    }
-
-    if (rules.maxLength && isValid) {
-      isValid = value.length <= rules.maxLength;
-    }
-
-    if (rules.isEmail && isValid) {
-      const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      isValid = pattern.test(value);
-    }
-
-    if (rules.isNumeric) {
-      const pattern = /^\d+$/;
-      isValid = pattern.test(value);
-    }
-
-    return isValid;
-  }
-
   inputChangedHandler = (event, inputIdentifier) => {
-    const updatedControls = {
-      ...this.state.controls
-    };
-    const updatedFormElement = {
-      ...updatedControls[inputIdentifier] 
-    };
-    updatedFormElement.value = event.target.value;
-    updatedFormElement.valid = updatedFormElement.validation ? this.checkValidity(updatedFormElement.value, updatedFormElement.validation) : true;
-    updatedFormElement.touched = true;
-    updatedControls[inputIdentifier] = updatedFormElement;
-    this.setState({controls: updatedControls, formIsValid: true});
+    const updatedControls = updateObject(this.state.controls, {
+      [inputIdentifier]: updateObject(this.state.controls[inputIdentifier], {
+        value: event.target.value,
+        valid: this.state.controls[inputIdentifier].validation ? checkValidity(event.target.value, this.state.controls[inputIdentifier].validation) : true,
+        touched: true
+      })
+    });
+
+    this.setState({ controls: updatedControls, formIsValid: true });
   }
 
   submitHandler = (event) => {
@@ -99,7 +70,7 @@ class Auth extends Component {
 
   switchAuthModeHandler = () => {
     this.setState(prevState => {
-      return {isSignUp: !prevState.isSignUp}
+      return { isSignUp: !prevState.isSignUp }
     })
   }
 
@@ -131,7 +102,7 @@ class Auth extends Component {
 
     if (this.props.error) {
       errorMessage = (
-        <p style={{color: 'danger'}}>{this.props.error.message}</p>
+        <p style={{ color: 'danger' }}>{this.props.error.message}</p>
       );
     }
 
@@ -148,7 +119,7 @@ class Auth extends Component {
           {form}
           <Button type='submit' btnType='Success'>SUBMIT</Button>
         </form>
-        <Button 
+        <Button
           clicked={this.switchAuthModeHandler}
           btnType='Danger'>SWITCH TO {this.state.isSignUp ? 'SIGN IN' : 'SIGN UP'}</Button>
       </div>
