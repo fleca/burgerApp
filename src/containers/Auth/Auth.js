@@ -4,7 +4,7 @@ import { Redirect } from 'react-router-dom';
 
 import classes from './Auth.module.css'
 import Input from '../../components/UI/Input';
-import Button from '../../components/UI/Button';
+import { Button } from 'react-bootstrap';
 import Spinner from '../../components/UI/Spinner';
 import * as actionTypes from '../../store/actions/index';
 import { updateObject, checkValidity } from '../../shared/utility';
@@ -116,12 +116,13 @@ class Auth extends Component {
         {authRedirect}
         {errorMessage}
         <form onSubmit={this.submitHandler}>
+          <h4 style={{ marginBottom: '0' }}>{!this.state.isSignUp ? 'SIGN IN' : 'SIGN UP'}</h4>
           {form}
-          <Button type='submit' btnType='Success'>SUBMIT</Button>
+          <Button style={{ marginBottom: '20px' }} type='submit' variant='success'>{!this.state.isSignUp ? 'SIGN IN' : 'SIGN UP'}</Button>
         </form>
         <Button
-          clicked={this.switchAuthModeHandler}
-          btnType='Danger'>SWITCH TO {this.state.isSignUp ? 'SIGN IN' : 'SIGN UP'}</Button>
+          onClick={this.switchAuthModeHandler}
+          variant='outline-danger'>SWITCH TO {this.state.isSignUp ? 'SIGN IN' : 'SIGN UP'}</Button>
       </div>
     )
   };
